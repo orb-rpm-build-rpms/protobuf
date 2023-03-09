@@ -2,7 +2,13 @@
 %bcond_without python
 # Build -python subpackage with C++. This significantly improves performance
 # compared to the pure-Python implementation.
+%if v"0%{?python3_version}" >= v"3.14"
+# TypeError: Metaclasses with custom tp_new are not supported
+# https://bugzilla.redhat.com/show_bug.cgi?id=2343969
+%bcond_with python_cpp
+%else
 %bcond_without python_cpp
+%endif
 # Build -java subpackage
 %if %{defined rhel}
 %bcond_with java
@@ -493,6 +499,7 @@ install -p -m 0644 %{SOURCE2} %{buildroot}%{_emacs_sitestartdir}
 %changelog
 * Tue Jun 17 2025 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.19.6-13
 - Temporarily use GCC 14 to workaround FTBFS on i686 and s390x
+- Don’t build Python extension with C++ on Python 3.14+
 
 * Mon Jun 02 2025 Python Maint <python-maint@redhat.com> - 3.19.6-12
 - Rebuilt for Python 3.14
