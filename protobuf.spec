@@ -83,6 +83,9 @@ Patch3:         protobuf-3.19.4-jre17-add-opens.patch
 #
 #   The PyFrameObject structure members have been removed from the public C API.
 Patch4:         protobuf-3.19.4-python3.11.patch
+# Backport upstream commit 9252b64ef3887e869999752010d553f068338a60:
+#   Automated rollback of commit 0ee34de
+Patch5:         protobuf-3.19.6-jre21.patch
 
 # A bundled copy of jsoncpp is included in the conformance tests, but the
 # result is not packaged, so we do not treat it as a formal bundled
@@ -288,6 +291,7 @@ descriptions in the Emacs editor.
 %endif
 %patch 3 -p1 -b .jre17
 %patch 4 -p1 -b .python311
+%patch 5 -p1 -b .jre21
 
 # Copy in the needed gtest/gmock implementations.
 %setup -q -T -D -b 3 -n protobuf-%{version}%{?rcver}
