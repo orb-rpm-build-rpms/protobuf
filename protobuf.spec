@@ -19,7 +19,7 @@ Name:           protobuf
 # “patch” updates of protobuf.
 Version:        3.19.6
 %global so_version 30
-Release:        12%{?dist}
+Release:        13%{?dist}
 
 # The entire source is BSD-3-Clause, except the following files, which belong
 # to the build system; are unpackaged maintainer utility scripts; or are used
@@ -491,6 +491,9 @@ install -p -m 0644 %{SOURCE2} %{buildroot}%{_emacs_sitestartdir}
 
 
 %changelog
+* Tue Jun 17 2025 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.19.6-13
+- Temporarily use GCC 14 to workaround FTBFS on i686 and s390x
+
 * Mon Jun 02 2025 Python Maint <python-maint@redhat.com> - 3.19.6-12
 - Rebuilt for Python 3.14
 
