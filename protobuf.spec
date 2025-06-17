@@ -108,12 +108,7 @@ BuildRequires:  automake
 BuildRequires:  libtool
 
 BuildRequires:  make
-# Use GCC 14 as a workaround for:
-#  https://github.com/protocolbuffers/protobuf/issues/21625
-#  https://github.com/protocolbuffers/protobuf/issues/21333
-BuildRequires:  gcc14-c++
-%global __cc_gcc gcc-14
-%global __cxx_gcc g++-14
+BuildRequires:  gcc-c++
 
 BuildRequires:  emacs
 BuildRequires:  zlib-devel
@@ -341,14 +336,6 @@ iconv -f iso8859-1 -t utf-8 CONTRIBUTORS.txt > CONTRIBUTORS.txt.utf8
 mv CONTRIBUTORS.txt.utf8 CONTRIBUTORS.txt
 export PTHREAD_LIBS="-lpthread"
 ./autogen.sh
-
-# The configure+make script does not respect the CC/CXX environment variables.
-# We need to trick it with symbolic links :(
-mkdir _path
-ln -s /usr/bin/%{__cc_gcc} _path/gcc
-ln -s /usr/bin/%{__cxx_gcc} _path/g++
-export PATH=_path:$PATH
-
 %configure --disable-static
 
 # -Wno-error=type-limits:
