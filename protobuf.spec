@@ -113,6 +113,8 @@ Requires:       protobuf-cpp%{?_isa} = %{version_cpp}-%{release}
 
 # See notes above the corresponding line in the base package:
 Provides:       bundled(utf8_range) = 1.0
+# Conflict on /usr/bin/protoc, /usr/share/man/man1/protoc.1.gz
+Conflicts:      protobuf3-compiler
 
 %description compiler
 This package contains Protocol Buffers compiler for all programming languages.
@@ -140,6 +142,11 @@ Provides:       upb-static
 Obsoletes:      protobuf-lite-devel < 3.25.1-4
 Obsoletes:      protobuf-lite-static < 3.19.6-4
 Obsoletes:      protobuf-static < 3.19.6-4
+
+# Conflict on 111 paths: all /usr/include/google/protobuf/ headers + /usr/lib64/libprotobuf.so, /usr/lib64/libprotoc.so, /usr/lib64/pkgconfig/protobuf.pc
+Conflicts:      protobuf3-devel
+# Conflict on /usr/lib64/libprotobuf-lite.so, /usr/lib64/pkgconfig/protobuf-lite.pc
+Conflicts:      protobuf3-lite-devel
 
 %description devel
 This package contains Protocol Buffers compiler for all languages and C++
@@ -185,6 +192,8 @@ License:        BSD-3-Clause
 BuildArch:      noarch
 
 Requires:       vim-filesystem
+Conflicts:      protobuf3-vim
+
 
 %description vim
 This package contains syntax highlighting for Google Protocol Buffers
@@ -302,6 +311,8 @@ License:        BSD-3-Clause
 BuildArch:      noarch
 
 Requires:       emacs-filesystem >= %{_emacs_version}
+Conflicts:      protobuf3-emacs
+
 
 %description emacs
 This package contains syntax highlighting for Google Protocol Buffers
