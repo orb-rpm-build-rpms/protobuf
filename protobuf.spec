@@ -18,7 +18,7 @@ Name:           protobuf
 # “patch” updates of protobuf.
 Version:        33.5
 %global so_version 33
-Release:        7%{?dist}
+Release:        8%{?dist}
 
 # See version.json:
 %global version_protoc %{version}
@@ -507,6 +507,22 @@ cd -
 %cmake_install
 find %{buildroot} -type f -name "*.la" -exec rm -f {} +
 
+# The CMake export lists the static libupb.a (the libupb target) in the public
+# INTERFACE_LINK_LIBRARIES of the libprotoc target, even though libprotoc.so
+# itself contains no upb symbols. That spurious entry forces every consumer of
+# libprotoc to statically link libupb.a. Projects that provide their own upb as
+# shared libraries (notably gRPC, which bundles upb) then pull two copies of upb
+# into one link: the linker cannot resolve upb's linker-array section symbols
+# across a static and a shared upb, and the link fails. Drop the entry from the
+# interface; the libupb target itself is kept for anyone who links it directly.
+# The grep guards the workaround: if a future protobuf stops over-linking upb
+# here, the substitution finds nothing, the guard fails, and the build stops so
+# this can be revisited.
+grep -q 'protobuf::libupb;' \
+    %{buildroot}%{_libdir}/cmake/protobuf/protobuf-targets.cmake
+sed -i 's/protobuf::libupb;//' \
+    %{buildroot}%{_libdir}/cmake/protobuf/protobuf-targets.cmake
+
 # protoc.1 man page
 install -p -m 0644 -D -t '%{buildroot}%{_mandir}/man1' '%{SOURCE4}'
 
@@ -648,6 +664,10 @@ install -p -m 0644 %{SOURCE2} %{buildroot}%{_emacs_sitestartdir}
 
 
 %changelog
+* Thu Sep 10 2026 Gordon Messmer <gmessmer@redhat.com> - 33.5-8
+- Drop the static libupb.a from the public link interface of libprotoc, which
+  does not use upb; it broke linking consumers that bundle their own upb (gRPC)
+
 * Thu Jul 16 2026 Fedora Release Engineering <releng@fedoraproject.org> - 33.5-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_45_Mass_Rebuild
 
